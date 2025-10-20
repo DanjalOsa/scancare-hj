@@ -118,16 +118,19 @@ export default function CameraScreen({ navigation }) {
 
   return (
     <View style={styles.cameraContainer}>
-      <CameraView 
-        style={styles.camera}
-        facing={facing}
-        ref={cameraRef}
-        barcodeScannerSettings={{
-          barcodeTypes: ['qr', 'ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'code39']
-        }}
-        onBarcodeScanned={onBarcodeScanned}
-      >
-        <View style={styles.overlay}>
+      <View style={styles.cameraWrapper}>
+        <CameraView
+          style={StyleSheet.absoluteFill}
+          facing={facing}
+          ref={cameraRef}
+          barcodeScannerSettings={{
+            barcodeTypes: ['qr', 'ean13', 'ean8', 'upc_a', 'upc_e', 'code128', 'code39']
+          }}
+          onBarcodeScanned={onBarcodeScanned}
+        />
+
+        {/* Overlay layered on top of camera */}
+        <View style={styles.overlay} pointerEvents="box-none">
           {/* Header */}
           <View style={styles.header}>
             <TouchableOpacity onPress={() => {
@@ -148,7 +151,7 @@ export default function CameraScreen({ navigation }) {
           </View>
 
           {/* Scanning Frame */}
-          <View style={styles.scanFrame}>
+          <View style={styles.scanFrame} pointerEvents="none">
             <View style={styles.cornerTopLeft} />
             <View style={styles.cornerTopRight} />
             <View style={styles.cornerBottomLeft} />
@@ -173,7 +176,7 @@ export default function CameraScreen({ navigation }) {
             </TouchableOpacity>
           </View>
         </View>
-      </CameraView>
+      </View>
     </View>
   );
 }
@@ -188,11 +191,15 @@ const styles = StyleSheet.create({
   cameraContainer: {
     flex: 1,
   },
+  cameraWrapper: {
+    flex: 1,
+    position: 'relative',
+  },
   camera: {
     flex: 1,
   },
   overlay: {
-    flex: 1,
+    ...StyleSheet.absoluteFillObject,
     backgroundColor: 'transparent',
   },
   header: {
