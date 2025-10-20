@@ -10,17 +10,23 @@ export function navigate(name, params) {
 
 // Helper function to open product detail screen
 export function openProductDetail(navigation, product) {
-  try {
-    // Direct navigation since we're already in the SearchStack
-    navigation.navigate('ProductDetail', { product });
-  } catch (e) {
-    // Fallback: Use global navigation ref
-    if (navigationRef.isReady()) {
-      navigationRef.navigate('MainTabs', { 
-        screen: 'Søg', 
-        params: { screen: 'ProductDetail', params: { product } } 
-      });
+  // Always target the nested Search stack via MainTabs -> 'Søg' -> 'ProductDetail'
+  const nestedParams = {
+    screen: 'Søg',
+    params: { screen: 'ProductDetail', params: { product } },
+  };
+
+  if (navigation && typeof navigation.navigate === 'function') {
+    try {
+      navigation.navigate('MainTabs', nestedParams);
+      return;
+    } catch (_) {
+      // fall through to global ref
     }
+  }
+
+  if (navigationRef.isReady()) {
+    navigationRef.navigate('MainTabs', nestedParams);
   }
 }
 
